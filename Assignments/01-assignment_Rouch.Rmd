@@ -1,0 +1,129 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+# Assignment 1 {#intro}
+Derek Rouch
+
+LLO 8200
+
+Introduction to Data Science
+
+August 25, 2019
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1) A sentence that says “Hello, World”
+
+```{r hello_world}
+'Hello, World'
+
+```
+
+## 2) R output that summarizes the variables in the `college.Rdata` dataset
+
+To begin, I will clear my Global Environment and get the library for the `tidyverse` package, which has already been installed.
+
+```{r college} 
+## Clear environment
+rm(list=ls())
+## Get tidyverse library
+library(tidyverse)
+
+```
+
+Then, I need to load the `college.Rdata` dataset.
+
+```{r load_data}
+## Load in the data
+load("~/data-science/college.Rdata")
+
+```
+
+### Finding Average Earnings by College Selectivity
+
+To find the average earnings based on admission selectivity, I can filter out colleges according to their admission rates. I'll define the most selective schools as those that admit less than 10% of applicants *(adm_rate<.1)*,  and the least selective schools that admit more than 30% *(adm_rate>.3)* of their applicants.
+
+```{r average_earning}
+## Average earnings for most selective colleges in dataset (admin rate of 10% or less)
+sc%>%filter(adm_rate<.1)%>%summarize(mean_earnings=mean(md_earn_wne_p6,na.rm=TRUE))
+
+## Average earnings for least selective colleges in dataset (admin rate of 30% or more)
+sc%>%filter(adm_rate>.3)%>%summarize(mean_earnings=mean(md_earn_wne_p6,na.rm=TRUE))
+
+```
+
+### Comparing Average Earnings
+
+To find the difference in average earnings between the most selective *(adm_rate<.1)* and least selective *(adm_rate>.3)*  colleges, I can simply subtract these filtered means.
+
+```{r comparing_average earnings}
+## Difference in average earnings between most selective and least selective colleges in dataset
+sc%>%filter(adm_rate<.1)%>%summarize(mean_earnings=mean(md_earn_wne_p6,na.rm=TRUE))-sc%>%filter(adm_rate>.3)%>%summarize(mean_earnings=mean(md_earn_wne_p6,na.rm=TRUE))
+```
+
+This shows us that graduates from selective schools have average earnings that are $18,752.86 higher than the average earnings of graduates from less selective schools.
+
+### SAT Scores and College Size
+
+To determine whether colleges with very high SAT scores tend to be larger or smaller than colleges with low SAT scores, I first plotted the variables to visually inspect whether a relationship was obvious.
+
+```{r sat_size_plot}
+## Plot of SAT Scores and College Size
+plot(sc$sat_avg, sc$ugds,main="SAT Scores and Undergraduates", xlab="Mean SAT", ylab="Undergraduates", pch=19)
+```
+
+Although there did not appear to be a correlation, I also ran the `cor.test` function to test for association between average SAT scores and the number of undergraduates enrolled.
+
+```{r}
+## Pearson Correlation test
+cor.test(sc$sat_avg, sc$ugds)
+```
+
+The `cor.test` confirmed that there is no relationship between average SAT scores and the number of undergraduates enrolled at a college, r(96) = 0.134, p > .05.
+
+### Cost and Debt
+
+To see the relationship between *average cost of attendance (tuition and room and board less all grant aid)* and *median debt of graduates*, I plotted the two variabes using the `plot` function.
+
+```{r cost_debt_plot}
+## Plot of Cost and Debt
+plot(sc$costt4_a, sc$debt_mdn,main="Cost and Debt", xlab="Cost", ylab="Debt", pch=19)
+
+```
+
+It's apparent from the plot that a positive relationship exists between a college's cost and the debt incurred by its students. This is not surprising.
+
+### Cost and Debt by Control of Institution
+
+To plot the cost and debt relationship by control of institution, I first passed the `sc` data set through a `filter` for control of instituion. I then assigned the filtered results a name *(public, private_np, and private_fp) before executing a `plot` function. For example, to plot the cost/debt relationship for public institutions, I set the `control` paraemeter equal to 1.
+
+```{r cost_debt_plot_public}
+## Plot of cost and debt for public institutions
+public <- sc%>%filter(control==1)
+
+plot(public$costt4_a, public$debt_mdn, main="Cost and Debt for Public Institutions", xlab="Cost", ylab="Debt", pch=19)
+```
+
+To plot the cost/debt relationship for private non-profit institutions, I set the `control` paraemeter equal to 2.
+
+```{r cost_debt_plot_private_nonprofit}
+## Plot of cost and debt for private non-profit institutions
+private_np <- sc%>%filter(control==2)
+
+plot(private_np$costt4_a, private_np$debt_mdn,main="Cost and Debt for Private Non-Profit Institutions", xlab="Cost", ylab="Debt", pch=19)
+```
+
+Finally, to plot the cost/debt relationship for private for-profit institutions, I set the `control` paraemeter equal to 3.
+
+```{r cost_debt_plot_private_forprofit}
+## Plot of cost and debt for private for-profit institutions
+private_fp <- sc%>%filter(control==3)
+
+plot(private_fp$costt4_a, private_fp$debt_mdn,main="Cost and Debt for Private For-Profit Institutions", xlab="Cost", ylab="Debt", pch=19)
+```
