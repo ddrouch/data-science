@@ -89,7 +89,7 @@ The `cor.test` confirmed that there is no relationship between average SAT score
 
 ### Cost and Debt
 
-To see the relationship between *average cost of attendance (tuition and room and board less all grant aid)* and *median debt of graduates*, I plotted the two variabes using the `plot` function.
+To see the relationship between __average cost of attendance (tuition and room and board less all grant aid)__ and *median debt of graduates*, I plotted the two variabes using the `plot` function.
 
 ```{r cost_debt_plot}
 ## Plot of Cost and Debt

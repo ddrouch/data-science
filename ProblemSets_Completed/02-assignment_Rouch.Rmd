@@ -1,0 +1,221 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+# Assignment 2 {#intro}
+Derek Rouch
+
+LLO 8200
+
+Introduction to Data Science
+
+September 1, 2019
+
+## Setting up R
+
+To begin, I cleared my Global Environment and get the necessary libraries: `knitr`, `tidyverse`, `plotly`, and `Metrics`.
+
+```{r setup}
+## Clear environment
+rm(list=ls())
+
+## Get libraries
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(plotly)
+library(Metrics)
+```
+
+Then, I loaded the `pd.Rdata` dataset, as well as the `pd_lab_explain.Rdata` codebook to decode the column headings.
+
+```{r data}
+## Load in the county-level data
+load("/Users/derekrouch/Documents/GitHub/data-science/pd.Rdata")
+
+## Load the variable descriptions
+load("/Users/derekrouch/Documents/GitHub/data-science/pd_lab_explain.Rdata")
+```
+
+
+## 1) Calculate the mean of the outcome.
+
+With the data loaded, I was able to pipe it to the `summarize` function to view the unconditional average of the home ownership rate variable, `homeown_rate`, which I found using the `mean` function.
+
+```{r unc_mean}
+## Unconditional average
+pd%>%summarize(mean_homeown_rate=mean(homeown_rate,na.rm=TRUE))
+```
+
+## 2) Use your mean as a prediction: Create a new variable that consists of the mean of the outcome.
+
+To create a new variable, I piped the data to the `mutate` function, and added `mean_homeown_rate` as a new column in my original `pd` dataset.
+
+```{r uncondtl_mean_as_predictor}
+##Unconditional average as a predictor
+pd <- pd%>%mutate(mean_homeown_rate=mean(homeown_rate,na.rm=TRUE))
+```
+
+## 3) Calculate a summary measure of the errors for each observation—the difference between your prediction and the outcome.
+
+Now that every observation in my dataset had the same value for `mean_homeown_rate`, I could calculate the error for each observation---that is, how far each county's home ownership rate is from the mean of 72.7%.
+
+To accomplish this, I subtracted the `mean_homeown_rate` from each individual county's `homeown_rate`. I named this difference `error_uncond`. Counties with positive error values have home ownership rates higher than the national average, while counties with negative error values have home ownership rates below that of the national average.
+
+```{r error_uncond}
+## Calculating the error term
+pd <- pd%>%mutate(error_uncond=homeown_rate-mean_homeown_rate)
+```
+
+To see how far off this unconditional predication is, I calculated the root mean squared error, using the `rmse` function.
+
+```{r rmse_uncond}
+## Calculating the root mean squared error
+rmse_uncond_mean <- rmse(pd$homeown_rate,pd$mean_homeown_rate)
+
+## Calling the RMSE
+rmse_uncond_mean
+```
+
+This root mean squared error tells me that the unconditional mean is off by `r round(rmse_uncond_mean,2)` percent.
+
+## 4) Calculate the mean of the outcome at levels of a predictor variable.
+
+In hopes of making a better estimate, I wanted to determine a predictor variable. First, I examined the table. However, with 57 variables (the original 55 plus my 2 new ones), it felt like I would be shooting in the dark, so I wanted a way of enhancing my guesswork.
+
+I knew this would require venturing to the far frontiers of my _R_ knowledge, but I felt that there was no corner Google and StackExchange couldn't get me out of, so I ventured on.
+
+_I apologize in advance if the following process is an affront to real statistical analysis._
+
+My first decision was to create a correlation matrix.
+
+To do this, I first needed to make sure that the data was in numeric form. I used `sapply` to determine the class of each variable.
+
+```{r view_var_class}
+## Determine each variable's class
+sapply(pd, class)
+```
+
+This showed me that the dataset's variables `fips` and `county` were stored as text, so I used `subset` to remove those columns and create a new, numeric-only dataset---which I named `pd_num_only`.
+
+```{r num_subset}
+## Create a subset of the data, consisting of only numeric variables
+pd_num_only <- subset(pd, select = -c(fips, county))
+```
+
+With this new dataset, I was finally able to create my correlation matrix, which I named `cor_matrix`. Since I am only concerned with `homeown_rate` correlations, I made a subset of the matrix to include only that variable.
+
+```{r results="hide"}
+## Create a correlation matrix, rounded to two decimal places
+cor_matrix <- cor(pd_num_only)
+round(cor_matrix, 2)
+
+## Remove every column except `homeown_rate` in the matrix
+cor_homeown_rate <- subset(cor_matrix, select = c(homeown_rate))
+```
+
+By viewing and sorting the new subset, I found two variables that showed some promise for predictive value. `house_unit_multi` (the percent of housing units in multi-unit structures) had a correlation coefficient of -0.68, and `same_house_pc` (the perecent living in the same house for one or more years) had a correlation coefficient of 0.57.
+
+Although negatively correlated, `house_unit_multi` had the strongest magnitude and was therefore my choice for predictor variable.
+
+I then broke up `house_unit_multi` into four levels using the `ntile` function, and added it as a variable using `mutate`.
+
+```{r condtl_mean_single}
+
+## Create a variable for quartiles of % housing units in multi-unit structures
+pd<-pd%>%mutate(house_unit_multi_level=ntile(house_unit_multi,4))
+
+## Check for evenl distribution across levels
+table(pd$house_unit_multi_level)
+
+## View house_unit_multi_level for each county
+pd%>%select(county,house_unit_multi,house_unit_multi_level)%>%View()
+```
+
+From here, I grouped the data by `house_unit_multi_level`, caluclated the `pred_homeown_rate` for each level, and ranked them in descending order (i.e., higher predicted home ownership rates on top)
+
+```{r group_by_house_unit_multi_level}
+##Group by predictor level
+  pd<-pd%>%group_by(house_unit_multi_level)%>%
+  ##Calculate mean at each level of predictor
+  mutate(pred_homeown_rate=mean(homeown_rate))%>%
+  ## Ungroup
+  ungroup()%>% 
+  #Rank by prediction, with ties sorted randomly
+  mutate(pred_homeown_rate_rank=rank(-pred_homeown_rate,ties.method="random"))
+```
+
+## 5) Use these conditional means as a prediction: for every county, use the conditional mean to provide a ‘’best guess” as to that county’s level of the outcome.
+
+Finally, I could view the counties and sort them by `pred_homeown_rate_rank`.
+
+```{r}
+## View new pred_homeown_rate by county
+pd%>%select(county,house_unit_multi,house_unit_multi_level,pred_homeown_rate, pred_homeown_rate_rank)%>%View()
+```
+
+To visualize this as a plot, I used the `ggplot` function. 
+
+```{r}
+## Plotting 
+gg<-ggplot(data=pd,aes(x=pred_homeown_rate_rank,y=homeown_rate,color="Actual"))
+
+## Stylizing the Plot
+gg<-gg+geom_point(alpha=.5,size=.5)
+gg<-gg+geom_point(aes(x=pred_homeown_rate_rank,y=pred_homeown_rate,color="Predicted:Conditional Mean, 1 var"))
+gg<-gg+ scale_color_manual("Type",values=c("Predicted:Conditional Mean, 1 var"="red","Actual"="black"))
+gg<-gg+theme(legend.position="bottom")
+gg<-gg+xlab("Rank")+ylab("Home Ownership Rate, 2008-2012")
+
+## Calling the plot
+gg
+```
+
+
+## 6) Calculate a summary measure of the error in your predictions.
+
+With my new `pred_homeown_rate` variable, I could  now calculate the conditional error for each observation---that is, how far each county's home ownership rate is from the mean of 72.7%, when predicted by `house_unit_multi_level`.
+
+To accomplish this, I subtracted the `mean_homeown_rate` from each individual county's `pred_homeown_rate`. I named this difference `error_cond`. Once again, counties with positive error values have home ownership rates higher than the national average, while counties with negative error values have home ownership rates below that of the national average.
+
+```{r error_cond}
+## Calculating the error term
+pd <- pd%>%mutate(error_cond=pred_homeown_rate-mean_homeown_rate)
+```
+
+As I did earlier, I also calculated the root mean squared error to see how far these values were off.
+
+```{r}
+## Calculating the root mean squared error based on house_unit_multi_level
+rmse_cond_mean <- rmse(pd$pred_homeown_rate,pd$mean_homeown_rate)
+
+## Calling the RMSE
+rmse_cond_mean
+```
+
+This new root mean squared error tells me that the conditional mean is off by `r round(rmse_cond_mean,2)` percent.
+
+To see what how much adding the `house_unit_multi_level` predictor variable improved my RMSE, I subtracted the two values.
+
+```{r}
+## Calculating the difference between rmse_uncond and rmse_cond
+rmse_difference <- rmse_uncond_mean-rmse_cond_mean
+
+## Calling the RMSE difference, rounded to two decimal places
+round(rmse_difference, 2)
+```
+
+To view this as a _percent improvement_, I divided my new `rmse_difference` by the original `rmse_conditional_mean`.
+
+```{r}
+## Calculating the percentage improvement
+rmse_percent_improved <- (rmse_difference/rmse_uncond_mean)*100
+
+## Calling the RMSE prcent improvement, rounded to two decimal places
+round(rmse_percent_improved, 2)
+```
+
+My RMSE improved by roughly 41.6 percent when I applied my predictor variable.

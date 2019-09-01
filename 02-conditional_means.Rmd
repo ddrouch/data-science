@@ -27,7 +27,8 @@ library(Metrics)
 We will be working with a dataset put together by the Census Bureau that summarizes the characteristics of the 3,088 counties in the United States. 
 
 ```{r data}
-load("pd.Rdata")
+## Load in the county-level data
+load("/Users/derekrouch/Documents/GitHub/data-science/pd.Rdata")
 ```
 
 ```{r}
@@ -40,7 +41,7 @@ The codebook for this dataset is stored as another dataset, `labels_explain`. Th
 ```{r explain_date}
 
 ## Full explanation of data in codebook
-load("pd_lab_explain.Rdata")
+load("/Users/derekrouch/Documents/GitHub/data-science/pd_lab_explain.Rdata")
 
 #or use View
 View(lab_explain)
