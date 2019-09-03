@@ -40,7 +40,6 @@ load("/Users/derekrouch/Documents/GitHub/data-science/pd.Rdata")
 load("/Users/derekrouch/Documents/GitHub/data-science/pd_lab_explain.Rdata")
 ```
 
-
 ## 1) Calculate the mean of the outcome.
 
 With the data loaded, I was able to pipe it to the `summarize` function to view the unconditional average of the home ownership rate variable, `homeown_rate`, which I found using the `mean` function.
@@ -117,7 +116,7 @@ round(cor_matrix, 2)
 cor_homeown_rate <- subset(cor_matrix, select = c(homeown_rate))
 ```
 
-By viewing and sorting the new subset, I found two variables that showed some promise for predictive value. `house_unit_multi` (the percent of housing units in multi-unit structures) had a correlation coefficient of -0.68, and `same_house_pc` (the perecent living in the same house for one or more years) had a correlation coefficient of 0.57.
+By viewing and sorting the new subset, I found two variables that showed some promise for predictive value. `house_unit_multi` (the percent of housing units in multi-unit structures) had a correlation coefficient of -0.68, and `same_house_pc` (the percent living in the same house for one or more years) had a correlation coefficient of 0.57.
 
 Although negatively correlated, `house_unit_multi` had the strongest magnitude and was therefore my choice for predictor variable.
 
@@ -128,14 +127,14 @@ I then broke up `house_unit_multi` into four levels using the `ntile` function, 
 ## Create a variable for quartiles of % housing units in multi-unit structures
 pd<-pd%>%mutate(house_unit_multi_level=ntile(house_unit_multi,4))
 
-## Check for evenl distribution across levels
+## Check for even distribution across levels
 table(pd$house_unit_multi_level)
 
 ## View house_unit_multi_level for each county
 pd%>%select(county,house_unit_multi,house_unit_multi_level)%>%View()
 ```
 
-From here, I grouped the data by `house_unit_multi_level`, caluclated the `pred_homeown_rate` for each level, and ranked them in descending order (i.e., higher predicted home ownership rates on top)
+From here, I grouped the data by `house_unit_multi_level`, calculated the `pred_homeown_rate` for each level, and ranked them in descending order (i.e., higher predicted home ownership rates on top)
 
 ```{r group_by_house_unit_multi_level}
 ##Group by predictor level
