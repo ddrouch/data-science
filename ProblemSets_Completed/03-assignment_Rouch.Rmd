@@ -1,0 +1,157 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+## Assignment 3 {#intro}
+Derek Rouch
+
+LLO 8200
+
+Introduction to Data Science
+
+September 5, 2019
+
+#### Setting up R
+
+To begin, I cleared my Global Environment and retrieved the necessary libraries: `knitr`, `tidyverse`, `plotly`, and `Metrics`.
+
+```{r setup}
+## Clear environment
+rm(list=ls())
+
+## Get libraries
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(plotly)
+library(Metrics)
+
+## Set working director
+setwd("~/Documents/GitHub/data-science")
+```
+
+Then, I loaded the `attrition.Rdata` dataset.
+
+```{r data}
+## Load in the attrition dataset
+load("~/Documents/GitHub/data-science/attrition.Rdata")
+```
+
+#### 1) Create a graph that shows the distribution of monthly income.
+
+Monthly income is a continuous variables, so I created a histogram below. 
+
+```{r}
+## Create histogram of monthly income width bindwidth of 1,000
+gg<-ggplot(at,aes(x=MonthlyIncome))
+gg<-gg+geom_histogram(fill = "steelblue4", binwidth = 1000)
+
+## Print plot
+gg
+``` 
+
+
+#### 2) Create a graph that shows the average level of monthly income by field of education.
+
+First, I grouped the `at` dataset by field of education. Then, I summarized the average monthly income in a new dataset, which I named `mi_sum` .
+
+```{r}
+## Group by field of education and summarize mean monthly income
+mi_sum<-at%>%
+  group_by(EducationField)%>%
+  summarize(mi_avg=mean(MonthlyIncome))
+
+## Print new dataset
+mi_sum
+```
+
+Then, I displayed the results in a bar plot.
+
+```{r}
+## Create bar plot with mean monthly income as y, education field as x. Order from low to high
+gg<-ggplot(mi_sum,aes(x=fct_reorder(EducationField,mi_avg),y=mi_avg))
+
+## Use bar plot geometry, height of bars set by level observed in dataset
+gg<-gg+geom_bar(stat="Identity", fill="steelblue4")
+
+## Label axes
+gg<-gg+xlab("Field")+ylab("Average Monthly Income")
+
+## Print plot
+gg
+```
+
+#### 3) Create another graph that shows average level of monthly income by field of education and gender.
+
+First, I summarized monthly income by field of education and gender, in a new dataset, `mi_sum2`.
+
+```{r}
+## Summarize monthly income by field of educcation -and- gender
+mi_sum2<-at%>%
+  group_by(EducationField,Gender)%>%
+  summarize(mi_avg=mean(MonthlyIncome))
+
+## Print the results
+mi_sum2
+```
+
+Then, I graphed it as a bar plot, using color to represent the results by gender.
+
+```{r}
+## Plot it using a bar plot
+gg<-ggplot(mi_sum2,aes(x=fct_reorder(EducationField,mi_avg),y=mi_avg,color=Gender))
+gg<-gg+geom_bar(stat="identity",aes(fill=Gender),position="dodge")
+gg<-gg+ylab("Average Monthly Income")+xlab("Field")
+
+## Print plot
+gg
+```
+
+#### 4) Create a graph that shows average levels of monthly income by field of education, gender and job level (scale of 1-5, highest ranked employees are 5)
+
+I created a new dataset, `mi_sum3` that summarized average levels of monthly income by field of education, gender and job level. I arranged the data by average monthly income, from highest to lowest.
+
+```{r}
+## Summarize monthly income by field of educcation, gender, and job level
+mi_sum3<-at%>%
+  group_by(EducationField,Gender,JobLevel)%>%
+  summarize(mi_avg=mean(MonthlyIncome))%>%
+  arrange(-mi_avg)
+
+## Print the results
+mi_sum3
+```
+
+I then plotted it is a bar graph with a facet wrap according to job level (where highest-ranked employees are represented as a "5").
+
+```{r}
+## Plot it using a bar plot
+gg<-ggplot(mi_sum3,aes(x=reorder(EducationField,mi_avg),
+                      y=mi_avg,
+                      fill=Gender))
+
+## Unstack the bar plot
+gg<-gg+geom_bar(stat="identity",position="dodge")
+ 
+## Separate out by job level
+gg<-gg+facet_wrap(~JobLevel)
+
+## Flip the coordinates
+gg<-gg+coord_flip()
+
+## Label the axes
+gg<-gg+ylab("Avg Monthly Income")+xlab("Department")
+
+## Angle the x-axis text
+gg<-gg+theme(axis.text.x = element_text(angle = 60, hjust = 1))
+
+## Title the graph
+gg<-gg+ggtitle("Monthly Income by Department and Gender, According to Job Level (1-5)")
+
+## Print plot
+gg
+```
+```

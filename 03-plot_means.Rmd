@@ -26,7 +26,7 @@ Next we load in the data.
 
 ## Loading Data 
 ```{r}
-load("attrition.Rdata")
+load("/Users/derekrouch/Documents/GitHub/data-science/attrition.Rdata")
 ```
 
 Today, our primary outcome of interest will be attrition. This is a binary variable that is currently encoded as text-- "Yes" or "No." We need to encode it as a binary variable with 1 meaning yes and 0 meaning no. After recoding, we need to make sure that the new variable looks correct.
