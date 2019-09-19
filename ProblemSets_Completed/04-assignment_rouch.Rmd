@@ -1,0 +1,168 @@
+---
+title: "Assignment 4"
+author: "Derek Rouch"
+date: "9/12/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Assignment 3 {#intro}
+Derek Rouch
+
+LLO 8200
+
+Introduction to Data Science
+
+September 12, 2019
+
+#### Setting up R
+
+To begin, I cleared my Global Environment and retrieved the necessary libraries: `tidyverse`, `haven`, and `readxl`.
+
+I also set my working directory to my GitHub repository folder.
+
+```{r initiate}
+## Clear environment
+rm(list=ls())
+
+## Get libraries
+library(tidyverse)
+library(haven)
+library(readxl)
+
+## Set working director
+setwd("~/Documents/GitHub/data-science")
+```
+
+#### 1) Panel data for OECD countries. Save as file name oecd.RData.
+
+The example from the async appeared to indicate that .dat files are fixed-width, but after accessing the url, it was apparent that the columns had values of varying character lengths, 
+
+What worked for me was using the `read.delim` function, with a space as the delimiter.
+
+```{r oecd}
+## Read in the data
+oecd <- read.delim("https://www.wiley.com/legacy/wileychi/baltagi/supp/Gasoline.dat", header = TRUE, sep="")
+```
+
+The data seemed to already meet the criteria for being considered "tidy"---that is, (i) each variable formed a column, (ii) each observation formed a row, and (iii) each type of observation unit formed a table.
+
+However, the column headings were all caps, and their meanings were difficult to decipher. After a little digging, I found a description of the variables at *https://rdrr.io/rforge/plm/man/Gasoline.html*, so I renamed the columns and made them lowercase in the process.
+
+```{r name_oecd}
+## Rename the columns
+names(oecd) <- c("country",
+                "year",
+                "log_of_gas_consumption_per_car",
+                "log_of_real_per_capita_income",
+                "log_of_real_gas_price",
+                "log_of_car_stock_per_capita")
+```
+
+Finally, I saved the data frame as `oecd.RData`.
+
+``` {r save_oecd}
+## Save as RData file
+save(oecd, file = "oecd.RData")
+```
+
+#### 2) U.S. National Election Survey data from 2004. Save as file name nes.RData.
+
+First, I read in the data using the `read_spss` function.
+
+```{r nes}
+## Read in the data
+nes <- read_spss("http://www.uta.edu/faculty/story/DataSets/NES2004.sav")
+```
+
+With the codebook found at *http://www.uta.edu/faculty/story/DataSets/NES2004Codebook.pdf*, each variable was easy to follow, and followed proper conventions. Also, it was clear that each row corresponded to a single observation, so the data felt tidy enough for government work (pun intended).
+
+The information in columns 1--3 seemed superfluous, so the only change I made to the dataset was selecting the columns that I *did* want. I then saved the data as `nes.RData`.
+
+```{r save_nes}
+## Select columns 4 through 242
+nes <- nes[,4:242]
+
+## Save as RData file
+save(nes, file = "nes.RData")
+```
+
+#### 3) General social survey, student version. Save as file name gss.Rdata.
+
+To begin, I downloaded the file and read in the data using the `read_excel` function.
+
+```{r gss}
+## Read in the data
+gss <- read_excel("GeneralSocialSurvey1996ExcelDataStudentVersion.xls",skip=0,col_names=TRUE)
+```
+
+It appeared that a period was placed in cells as a substitute for null values. It felt preferable to have these cells blank instead, but I was unable to figure out how to do this.
+
+I Googled potential solutions for an hour, trying my hand at `ifelse`, `gsub`, `is.na`, `is.null`, and `replace`, but could not get any of those functions to remove the periods, so I had to just save the file as-is.
+
+```{r save_gss}
+## Save as RData file
+save(gss, file = "gss.RData")
+```
+
+#### 4) Replication file for “STATISTICAL DISCRIMINATION OR PREJUDICE? A LARGE SAMPLE FIELD EXPERIMENT”. Open up and save the mainData.csv file. Save it as maindata.RData.
+
+To read in the data, I downloaded the file to my local drive and used the `read_csv` function to pull it into R.
+
+```{r maindata}
+## Read in the data
+maindata <- read_csv(file="/Users/derekrouch/Documents/GitHub/data-science/ProblemSets_Completed/mainData.csv")
+```
+
+After viewing the data frame, it first looked like there might be multiple observations for rent on a single row, but a closer look showed that the **rent2** column was, in fact, referrng to the rent price *squared*.
+
+While I again did not have much context for this data set, one thing that seemed obvious was to remove the identifying information. Therefore, I deleted the **first_name** and **last_name** columns.
+
+```{r maindata_anon}
+## Remove first_name and last_name
+maindata <- maindata[ ,-(c(10,11))]
+```
+
+Then I saved the file as `maindata.RData`.
+
+``` {r save_maindata}
+## Save as RData file
+save(maindata, file = "maindata.RData")
+```
+
+#### 5) The Lalonde dataset, covering work experiences in the Panel Study of Income Dynamics (psid). Save as psid.RData.
+
+The dataset had values in scientific notation, so it orignally felt appropriate to load it in as a fixed-width file. However, the assignment tips document recommended using `read_delim` again, so that's how I loaded in the data.
+
+Since the data did not have a header row, I set the `header` parameter equal to **FALSE**.
+
+```{r psid}
+## Read in the data
+psid <- read.delim("http://users.nber.org/~rdehejia/data/psid_controls.txt", header = FALSE, sep="")
+```
+
+With the data loaded, I named the columns according to the description found at *http://users.nber.org/~rdehejia/nswdata2.html*.
+
+```{r psid_headers}
+## Give a header
+names(psid)<-c("treatment_indicator",
+               "age",
+               "education",
+               "black",
+               "hispanic",
+               "married",
+               "nodegree",
+               "earnings_1974",
+               "earnings_1975",
+               "earnings_1978")
+```
+
+The async appeared the suggest that multi-year data count as separate observations, and should thus be on different rows. However, without an identifier variable for this dataset, that felt strange to do, so I left the data as-is and saved the file.
+
+```{r save_psid}
+## Save as RData file
+save(psid, file = "psid.RData")
+```

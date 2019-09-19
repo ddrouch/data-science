@@ -1,0 +1,398 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/michaelewens/Dropbox/Research/done/final-restat/pewsDescription.txt
+  log type:  text
+ opened on:   2 Jun 2014, 15:22:02
+
+. desc
+
+Contains data from /Users/michaelewens/Dropbox/Research/done/final-restat/april_2009_economy.dta
+  obs:         2,253                          
+ vars:           213                          
+ size:       497,913                          
+------------------------------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+------------------------------------------------------------------------------------------------------------------------
+psraid          int     %8.0g                 unique id
+int_date        long    %12.0g                interview date
+sample          byte    %8.0g      sample     sample type
+comp            byte    %8.0g      comp       completion type
+tz              str1    %1s                   time zone from sample
+usr             str1    %1s                   community type - alpha
+usr1            byte    %8.0g      usr1       community type
+state           byte    %8.0g      state      state from zipcode fips
+cregion         byte    %8.0g      cregion    census region from zipcode
+density3        byte    %8.0g      density3   population density from zipcode
+qlang           byte    %8.0g      qlang      questionnaire language
+form            byte    %8.0g      form       form split
+version         byte    %8.0g                 version of programmed questionnaire
+qs1             byte    %8.0g      qs1        s1. are you under 18 years old, or are you 18 or older?
+sex             byte    %8.0g      sex        sex. record respondent sex
+q1              byte    %8.0g      q1         q1 overall, how would you rate the quality of life for you and your family
+                                                today
+q5              byte    %8.0g      q5         q5 do you use a computer at your workplace, at school, at home, or
+                                                anywhere else
+q6a             byte    %8.0g      q6a        q6a do you use the internet, at least occasionally?
+q6b             byte    %8.0g      q6b        q6b do you send or receive email, at least occasionally?
+q7              byte    %8.0g      q7         q7 did you happen to use the internet yesterday?
+q8a             byte    %8.0g      LABB       q8a about how often do you use the internet or email from - home – several
+                                                times
+q8b             byte    %8.0g      LABB       q8a about how often do you use the internet or email from - work – several
+                                                times
+q9              byte    %8.0g      q9         q9 does anyone in your household use the internet from home or send and
+                                                receive
+q9b_1           byte    %8.0g      LABC       q9b (first response) and who is it in your household that uses the
+                                                internet from
+q9b_2           byte    %8.0g      LABC       q9b (second response) and who is it in your household that uses the
+                                                internet fro
+q9b_3           byte    %8.0g      LABC       q9b (third response) and who is it in your household that uses the
+                                                internet from
+q9c             byte    %8.0g      q9c        q9c did you ever at some point use the internet or email, but have since
+                                                stopped
+q9d             byte    %8.0g      q9d        q9d would you like to start using the internet and email (if q9c=1:
+                                                again), or i
+q9e             byte    %8.0g      q9e        q9e what is the main reason you don’t use the internet or email?
+                                                (precoded open
+q10a            byte    %8.0g      LABD       q10a as i read the following list of items, please tell me if you happen
+                                                to have
+q10b            byte    %8.0g      LABD       q10b as i read the following list of items, please tell me if you happen
+                                                to have
+q10c            byte    %8.0g      LABD       q10c as i read the following list of items, please tell me if you happen
+                                                to have
+q10d            byte    %8.0g      LABD       q10d as i read the following list of items, please tell me if you happen
+                                                to have
+q10e            byte    %8.0g      LABD       q10e as i read the following list of items, please tell me if you happen
+                                                to have
+q10f            byte    %8.0g      LABD       q10f as i read the following list of items, please tell me if you happen
+                                                to have
+q10g            byte    %8.0g      LABD       q10g as i read the following list of items, please tell me if you happen
+                                                to have
+q11a            byte    %8.0g      LABE       q11a on your laptop computer, do you use - wifi or wireless connection to
+                                                access
+q11b            byte    %8.0g      LABE       q11b on your laptop computer, do you use - wireless broadband, such as an
+                                                aircar
+q12             byte    %8.0g      q12        q12 on your laptop computer, how often do you access the internet using a
+                                                wirele
+q13a            byte    %8.0g      LABF       q13a when you access the internet - using wifi on your laptop computer -,
+                                                do you
+q13b            byte    %8.0g      LABF       q13b when you access the internet - using wireless broadband on your
+                                                laptop comp
+q14             byte    %8.0g      q14        q14 on your desktop computer, do you use wireless broadband, such as an
+                                                aircard,
+q15a            byte    %8.0g      LABG       q15a please tell me if you ever use your cell phone or blackberry or other
+                                                devic
+q15b            byte    %8.0g      LABG       q15b please tell me if you ever use your cell phone or blackberry or other
+                                                devic
+q15c            byte    %8.0g      LABG       q15c please tell me if you ever use your cell phone or blackberry or other
+                                                devic
+q15d            byte    %8.0g      LABG       q15d please tell me if you ever use your cell phone or blackberry or other
+                                                devic
+q15e            byte    %8.0g      LABG       q15e please tell me if you ever use your cell phone or blackberry or other
+                                                devic
+q15f            byte    %8.0g      LABG       q15f please tell me if you ever use your cell phone or blackberry or other
+                                                devic
+q15g            byte    %8.0g      LABG       q15g please tell me if you ever use your cell phone or blackberry or other
+                                                devic
+q15h            byte    %8.0g      LABG       q15h please tell me if you ever use your cell phone or blackberry or other
+                                                devic
+q15i            byte    %8.0g      LABG       q15i please tell me if you ever use your cell phone or blackberry or other
+                                                devic
+q15j            byte    %8.0g      LABG       q15j please tell me if you ever use your cell phone or blackberry or other
+                                                devic
+q16             byte    %8.0g      q16        q16 using your cell phone, how often do you access the internet – several
+                                                times
+q17             byte    %8.0g      q17        q17 when you access the internet using your cell phone, do you mostly do
+                                                this at
+q18a            byte    %8.0g      LABH       q18a thinking about these various devices… do you ever access the internet
+                                                or em
+q18b            byte    %8.0g      LABH       q18b thinking about these various devices… do you ever access the internet
+                                                or em
+q18c            byte    %8.0g      LABH       q18c thinking about these various devices… do you ever access the internet
+                                                or em
+q18d            byte    %8.0g      LABH       q18d thinking about these various devices… do you ever access the internet
+                                                or em
+q19a            byte    %8.0g      LABI       q19a thinking now about how you get information and communicate with
+                                                others usin
+q19b            byte    %8.0g      LABI       q19b thinking now about how you get information and communicate with
+                                                others usin
+q19c            byte    %8.0g      LABI       q19c thinking now about how you get information and communicate with
+                                                others usin
+activ01         byte    %8.0g      LABJ       activ01. send or read email -- web-a/b. do you ever use the internet to…?
+activ02         byte    %8.0g      LABJ       activ02. get news online -- web-a/b. do you ever use the internet to…?
+activ03         byte    %8.0g      LABJ       activ03. get financial information online, such as stock quotes or
+                                                mortgage inte
+activ16         byte    %8.0g      LABJ       activ16. buy or make a reservation online for a travel service, like an
+                                                airline
+activ21         byte    %8.0g      LABJ       activ21. do any banking online -- web-a/b. do you ever use the internet
+                                                to…?
+activ28         byte    %8.0g      LABJ       activ28. look for religious or spiritual information online -- web-a/b. do
+                                                you e
+activ49         byte    %8.0g      LABJ       activ49. make a donation to a charity online -- web-a/b. do you ever use
+                                                the int
+activ82         byte    %8.0g      LABJ       activ82. use online classified ads or sites like craig's-list -- web-a/b.
+                                                do you
+activ87         byte    %8.0g      LABJ       activ87. use a social networking site like myspace, facebook or
+                                                linkedin.com --
+activ112        byte    %8.0g      LABJ       activ112. use twitter or another service to share updates about yourself
+                                                or to s
+activ113        byte    %8.0g      LABJ       activ113. watch a television show or movie online -- web-a/b. do you ever
+                                                use th
+activ13         byte    %8.0g      LABJ       activ13. [form a] go online for no particular reason, just for fun or to
+                                                pass th
+activ15         byte    %8.0g      LABJ       activ15. [form a] buy a product online, such as books, music, toys or
+                                                clothing -
+activ19         byte    %8.0g      LABJ       activ19. [form a] look online for information about a job -- web-a/b. do
+                                                you eve
+activ23         byte    %8.0g      LABJ       activ23. [form a] play a lottery or gamble online -- web-a/b. do you ever
+                                                use th
+activ24         byte    %8.0g      LABJ       activ24. [form a] buy or sell stocks, mutual funds or bonds online --
+                                                web-a/b. d
+activ29         byte    %8.0g      LABJ       activ29. [form a] participate in an online auction -- web-a/b. do you ever
+                                                use t
+activ08         byte    %8.0g      LABJ       activ08. [form b] check weather reports and forecasts online -- web-a/b.
+                                                do you
+activ11         byte    %8.0g      LABJ       activ11. [form b] look online for news or information about politics --
+                                                web-a/b.
+activ52         byte    %8.0g      LABJ       activ52. [form b] use an online search engine to help you find information
+                                                on th
+activ73         byte    %8.0g      LABJ       activ73. [form b] rate a product, service or person using an online rating
+                                                syste
+activ102        byte    %8.0g      LABJ       activ102. [form b] watch a video o a video-sharing site like youtube or
+                                                googlevi
+activ114        byte    %8.0g      LABJ       activ114. [form b] participate in a video call or teleconference --
+                                                web-a/b. do
+q20             byte    %8.0g      q20        q20 you mentioned you have watched a tv show or movie online. have you
+                                                ever conn
+q21             byte    %8.0g      q21        q21 how would you rate economic conditions in this country today…
+                                                excellent, goo
+q22             byte    %8.0g      q22        q22 how would you rate your own personal financial situation?  would you
+                                                say you
+empl            byte    %8.0g      empl       empl are you now employed full-time, part-time, retired, or are you not
+                                                employed
+ownrent         byte    %8.0g      ownrent    ownrent do you own or rent your home?
+q23a            byte    %8.0g      LABK       q23a for each of the following, please tell me whether or not it is
+                                                something th
+q23b            byte    %8.0g      LABK       q23b for each of the following, please tell me whether or not it is
+                                                something th
+q23c            byte    %8.0g      LABK       q23c for each of the following, please tell me whether or not it is
+                                                something th
+q23d            byte    %8.0g      LABK       q23d for each of the following, please tell me whether or not it is
+                                                something th
+q24a            byte    %8.0g      LABL       q24a thinking about your personal finances, have you done any of the
+                                                following i
+q24b            byte    %8.0g      LABL       q24b thinking about your personal finances, have you done any of the
+                                                following i
+q24c            byte    %8.0g      LABL       q24c thinking about your personal finances, have you done any of the
+                                                following i
+q24d            byte    %8.0g      LABL       q24d thinking about your personal finances, have you done any of the
+                                                following i
+q25a            byte    %8.0g      LABM       q25a in the past twelve months, did you use any of the following sources
+                                                to get
+q25b            byte    %8.0g      LABM       q25b in the past twelve months, did you use any of the following sources
+                                                to get
+q25c            byte    %8.0g      LABM       q25c in the past twelve months, did you use any of the following sources
+                                                to get
+q25d            byte    %8.0g      LABM       q25d in the past twelve months, did you use any of the following sources
+                                                to get
+q25e            byte    %8.0g      LABM       q25e in the past twelve months, did you use any of the following sources
+                                                to get
+q25f            byte    %8.0g      LABM       q25f in the past twelve months, did you use any of the following sources
+                                                to get
+q26             byte    %8.0g      q26        q26 in addition to the sources you just mentioned, do you ever use the
+                                                internet
+q27a            byte    %8.0g      LABN       q27a in the past twelve months, did you use any of the following sources
+                                                to get
+q27b            byte    %8.0g      LABN       q27b in the past twelve months, did you use any of the following sources
+                                                to get
+q27c            byte    %8.0g      LABN       q27c in the past twelve months, did you use any of the following sources
+                                                to get
+q27d            byte    %8.0g      LABN       q27d in the past twelve months, did you use any of the following sources
+                                                to get
+q27e            byte    %8.0g      LABN       q27e in the past twelve months, did you use any of the following sources
+                                                to get
+q27f            byte    %8.0g      LABN       q27f in the past twelve months, did you use any of the following sources
+                                                to get
+q28             byte    %8.0g      q28        q28 in addition to the sources you just mentioned, do you ever use the
+                                                internet
+q29             byte    %8.0g      q29        q29 about how often do you go online and do something related to the
+                                                economy or
+q30             byte    %8.0g      q30        q30 in the last 12 months, have you been going online to check information
+                                                about
+q31a            byte    %8.0g      LABO       q31a specifically, in the last 12 months, have you looked online for -
+                                                help and
+q31b            byte    %8.0g      LABO       q31b specifically, in the last 12 months, have you looked online for -
+                                                advice ab
+q31c            byte    %8.0g      LABO       q31c specifically, in the last 12 months, have you looked online for -
+                                                informati
+q31d            byte    %8.0g      LABO       q31d specifically, in the last 12 months, have you looked online for -
+                                                informati
+q31e            byte    %8.0g      LABO       q31e specifically, in the last 12 months, have you looked online for -
+                                                informati
+q31f            byte    %8.0g      LABO       q31f specifically, in the last 12 months, have you looked online for -
+                                                informati
+q31g            byte    %8.0g      LABO       q31g specifically, in the last 12 months, have you looked online for -
+                                                informati
+q31h            byte    %8.0g      LABO       q31h specifically, in the last 12 months, have you looked online for -
+                                                informati
+q31i            byte    %8.0g      LABO       q31i specifically, in the last 12 months, have you looked online for -
+                                                informati
+q31j            byte    %8.0g      LABO       q31j specifically, in the last 12 months, have you looked online for -
+                                                informati
+q31k            byte    %8.0g      LABO       q31k specifically, in the last 12 months, have you looked online for -
+                                                rankings
+q32a            byte    %8.0g      LABP       q32a in the last 12 months, have you gone online to - sell personal items
+                                                throug
+q32b            byte    %8.0g      LABP       q32b in the last 12 months, have you gone online to - find and use online
+                                                coupon
+q32c            byte    %8.0g      LABP       q32c in the last 12 months, have you gone online to - find the lowest
+                                                price avai
+q33a            byte    %8.0g      LABQ       q33a just tell me if you happened to have done each one, or not, in the
+                                                last 12
+q33b            byte    %8.0g      LABQ       q33b just tell me if you happened to have done each one, or not, in the
+                                                last 12
+q33c            byte    %8.0g      LABQ       q33c just tell me if you happened to have done each one, or not, in the
+                                                last 12
+q34a            byte    %8.0g      LABR       q34a have you ever posted comments, queries or information about the
+                                                economy or
+q34b            byte    %8.0g      LABR       q34b have you ever posted comments, queries or information about the
+                                                economy or
+q34c            byte    %8.0g      LABR       q34c have you ever posted comments, queries or information about the
+                                                economy or
+q34d            byte    %8.0g      LABR       q34d have you ever posted comments, queries or information about the
+                                                economy or
+q34e            byte    %8.0g      LABR       q34e have you ever posted comments, queries or information about the
+                                                economy or
+q35a            byte    %8.0g      LABS       q35a thinking about what you have done on social networking sites like
+                                                facebook
+q35b            byte    %8.0g      LABS       q35b thinking about what you have done on social networking sites like
+                                                facebook
+q35c            byte    %8.0g      LABS       q35c thinking about what you have done on social networking sites like
+                                                facebook
+q35d            byte    %8.0g      LABS       q35d thinking about what you have done on social networking sites like
+                                                facebook
+q35e            byte    %8.0g      LABS       q35e thinking about what you have done on social networking sites like
+                                                facebook
+q36a            byte    %8.0g      LABT       q36a what impact, if any, has the information and advice you found online
+                                                had on
+q36b            byte    %8.0g      LABT       q36b what impact, if any, has the information and advice you found online
+                                                had on
+q36c            byte    %8.0g      LABT       q36c what impact, if any, has the information and advice you found online
+                                                had on
+q36d            byte    %8.0g      LABT       q36d what impact, if any, has the information and advice you found online
+                                                had on
+q36e            byte    %8.0g      LABT       q36e what impact, if any, has the information and advice you found online
+                                                had on
+q37a            byte    %8.0g      LABU       q37a in the last 12 months, have you ever gone online to do any of these
+                                                things
+q37b            byte    %8.0g      LABU       q37b in the last 12 months, have you ever gone online to do any of these
+                                                things
+q37c            byte    %8.0g      LABU       q37c in the last 12 months, have you ever gone online to do any of these
+                                                things
+q37d            byte    %8.0g      LABU       q37d in the last 12 months, have you ever gone online to do any of these
+                                                things
+q37e            byte    %8.0g      LABU       q37e in the last 12 months, have you ever gone online to do any of these
+                                                things
+q38             byte    %8.0g      q38        q38 overall, has what you learned online improved your understanding of
+                                                the nati
+q39a            byte    %8.0g      LABV       q39a still thinking about what you have learned online… has what you
+                                                learned onl
+q39b            byte    %8.0g      LABV       q39b still thinking about what you have learned online… has what you
+                                                learned onl
+q39c            byte    %8.0g      LABV       q39c still thinking about what you have learned online… has what you
+                                                learned onl
+q39d            byte    %8.0g      LABV       q39d still thinking about what you have learned online… has what you
+                                                learned onl
+modem           byte    %8.0g      modem      modem at home, do you connect to the internet through a dial-up telephone
+                                                line,
+network         byte    %8.0g      network    network do you happen to have a computer network that links your computers
+                                                at ho
+q40             byte    %8.0g      q40        q40 thinking about your high-speed internet service at home, do you
+                                                subscribe to
+q41             byte    %8.0g      q41        q41 do you know if there is more than one company or other provider of
+                                                high-spee
+q42             byte    %8.0g      q42        q42 how many broadband internet providers are there in your area?
+q43             byte    %8.0g      q43        q43 do you happen to know whether high-speed internet service is available
+                                                in yo
+q44             int     %8.0g      q44        q44 to the nearest dollar, about how much do you pay each month for
+                                                internet acc
+q45             byte    %8.0g      q45        q45 do you pay an extra monthly fee for internet access when you are on
+                                                the go,
+q46a            byte    %8.0g      LABW       q46a how important do you think a high-speed internet connection is for
+                                                each of
+q46b            byte    %8.0g      LABW       q46b how important do you think a high-speed internet connection is for
+                                                each of
+q46c            byte    %8.0g      LABW       q46c how important do you think a high-speed internet connection is for
+                                                each of
+q46d            byte    %8.0g      LABW       q46d how important do you think a high-speed internet connection is for
+                                                each of
+q46e            byte    %8.0g      LABW       q46e how important do you think a high-speed internet connection is for
+                                                each of
+q47             byte    %8.0g      q47        q47 would you like to have a faster, 'broadband' connection, or isn't that
+                                                somet
+q48_1           byte    %8.0g      LABX       q48 (first response) what would it take to get you to switch to broadband?
+                                                (pre-
+q48_2           byte    %8.0g      LABX       q48 (second response) what would it take to get you to switch to
+                                                broadband? (pre
+vote01          byte    %8.0g      vote01     vote01 a lot of people tell us they didn't get a chance to vote in the
+                                                2008 pres
+vote02          byte    %8.0g      vote02     vote02 in the 2008 presidential election, did you happen to vote for
+                                                [rotate: (j
+age             byte    %8.0g      age        age what is your age?
+mar             byte    %8.0g      mar        mar are you currently married, living with a partner, divorced, separated,
+                                                widow
+par             byte    %8.0g      par        par are you the parent or guardian of any children under age 18 now living
+                                                in yo
+educ            byte    %8.0g      educ       educ what is the last grade or class you completed in school? (do not
+                                                read, but
+hisp            byte    %8.0g      hisp       hisp are you, yourself, of hispanic or latino origin or descent, such as
+                                                mexican
+race            byte    %8.0g      race       race what is your race?  are you white, black, asian, or some other race?
+inc             byte    %8.0g      inc        inc last year, that is in 2008, what was your total family income from all
+                                                sourc
+ql2             byte    %8.0g      ql2        l2. of all the telephone calls that you receive, do you get [read and
+                                                rotate opt
+qc1             byte    %8.0g      qc1        c1. now thinking about your telephone use… is there at least one telephone
+                                                insid
+qc2             byte    %8.0g      qc2        c2. of all the telephone calls that you receive, do you get [read and
+                                                rotate opt
+onlecon         byte    %8.0g      onlecon    online economic user status
+phoneuse        byte    %8.0g      phoneuse   telephone use
+racethn         byte    %8.0g      racethn    race/ethnicity
+recage          byte    %8.0g      recage     recoded age
+receduc         byte    %8.0g      receduc    recoded education
+weight          float   %9.0g                 total sample weight
+i_user          byte    %8.0g      i_user     i_user. internet users
+emailer         byte    %8.0g      emailer    emailer. use internet to send/read email
+homework        byte    %8.0g      homework   homework. use internet at home/work - based on q8a/b and q6a/b
+often           byte    %8.0g      often      often. how often does r use internet - based on q8a thru q8b
+wireless        byte    %8.0g      wireless   wireless. wireless internet users - including im-ing
+econuser        byte    %8.0g      econuser   econuser. online economic users
+econnet         byte    %8.0g      econnet    econnet. internet as a source of general or personal economic information
+q10cnt          byte    %8.0g                 q10cnt. count of yes responses to the q10 series (a-g)
+q15cnt          byte    %8.0g                 q15cnt. count of total yes responses (1 or 2) to the q15 series (a-j)
+q25cnt          byte    %8.0g                 q25cnt. count of yes, i used that source responses to the q25 series (a-f)
+q27cnt          byte    %8.0g                 q27cnt. count of yes, i used that source responses to the q27 series (a-f)
+q31cnt          byte    %8.0g                 q31cnt. count of yes, have done this responses to the q31 series (a-k)
+q32cnt          byte    %8.0g                 q32cnt. count of yes, have done this responses to the q32 series (a-c)
+q33cnt          byte    %8.0g                 q33cnt. count of yes responses to the q33 series (a-c)
+q35cnt          byte    %8.0g                 q35cnt. count of yes responses to the q35 series (a-e)
+q36cnt          byte    %8.0g                 q36cnt. count of major impact responses to the q36 series (a-e)
+q37cnt          byte    %8.0g                 q37cnt. count of yes, have done this responses to the q37 series (a-e)
+q39conf         byte    %8.0g                 q39conf. count of more confident responses to the q39 series (a-d)
+q39worr         byte    %8.0g                 q39worr. count of more worried responses to the q39 series (a-d)
+q46very         byte    %8.0g                 q46very. count of very important responses to the q46 series (a-e)
+q46impt         byte    %8.0g                 q46impt. count of very or somewhat important responses to the q46 series
+                                                (a-e)
+genage          byte    %8.0g      genage     genage. generational age breaks
+econhurt        byte    %8.0g      econhurt   econhurt. personally hurt by downturn
+bbd             byte    %8.0g                 broadband user
+------------------------------------------------------------------------------------------------------------------------
+Sorted by:  
+
+. log close
+      name:  <unnamed>
+       log:  /Users/michaelewens/Dropbox/Research/done/final-restat/pewsDescription.txt
+  log type:  text
+ closed on:   2 Jun 2014, 15:22:07
+------------------------------------------------------------------------------------------------------------------------

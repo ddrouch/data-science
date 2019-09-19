@@ -7,6 +7,9 @@ Flat data is data that is arranged with one case per row, with one column per va
 library(tidyverse)
 library(haven)
 library(readxl)
+
+install.packages("gdata")
+
 ```
 
 
@@ -20,7 +23,7 @@ We'll start with a csv file which is among the most common formats for datasets.
 
 #Load in the HSB dataset from the UCLA statistical computing site
 
-hsb<-read_csv(file="https://stats.idre.ucla.edu/wp-content/uploads/2016/02/hsb2-2.csv")
+hsb<-read_csv(file="/Users/derekrouch/Documents/GitHub/data-science/hsb.csv")
 
 write_csv(hsb,path="hsb.csv")
 
@@ -51,17 +54,16 @@ Fixed width files are an older file format that you don't see as much of any mor
 ```{r}
 #Fixed width files
 
-my.widths=c(3,#id
-            1, #female
-            1, #race
-            1, #ses
-            1, #schtyp
-            1, #prog
-            2, #read
-            2, #write
-            2, #math 
-            2, #science
-            2 #socst
+my.widths=c(14,#id
+            14, #female
+            14, #race
+            14, #ses
+            14, #schtyp
+            14, #prog
+            24, #read
+            24, #write
+            24, #math 
+            24, #science
             )
             
 my_positions<-fwf_widths(my.widths)
@@ -123,14 +125,14 @@ In most work settings you'll work with excel files. To get these into shape you'
 ## Web page: 
 ##http://nces.ed.gov/programs/digest/d14/tables/dt14_204.10.asp
 
-if(file.exists("free.xls")==FALSE){
-  download.file("http://nces.ed.gov/programs/digest/d14/tables/xls/tabn204.10.xls",destfile="free.xls")
-free<-read_excel("free.xls",skip=4,col_names=FALSE)  
-}else{
-  free<-read_excel("free.xls",skip=4,col_names=FALSE)
-}
+
+free<-read_excel("/Users/derekrouch/Downloads/tabn204.10.xls",skip=4,col_names=FALSE)
+
+read.xls("/Users/derekrouch/Documents/GitHub/LLO8200/free.xls",skip=4, col_names=FALSE)
 
 head(free)
+
+read_excel("/Users/derekrouch/Documents/GitHub/LLO8200/free.xls")
 
 
 
@@ -168,9 +170,10 @@ First, let's git rid of unwanted columns by selecting a list of things we don't 
 
 free2<-free[ ,-(c(3,6,9,12,15,18))]
 
+head(free2)
 
 #Get rid of unwanted rows
-free2<-free2%>%filter(is.na(X__1)==FALSE)
+free2<-free2%>%filter(is.na(...1)==FALSE)
 ```
 
 Now we're going to select some things we DO want, by using the `number_1:number_x` setup. 
