@@ -15,7 +15,7 @@ September 22, 2019
 
 To begin, I cleared my Global Environment and retrieved the necessary libraries. I also set my working directory to my GitHub repository folder.
 
-```{r setup}
+```{r setup, include=FALSE}
 ## Clear environment
 rm(list=ls())
 
