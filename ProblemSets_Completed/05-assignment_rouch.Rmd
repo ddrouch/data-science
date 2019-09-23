@@ -1,0 +1,178 @@
+```{r knitr, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Assignment 5
+Derek Rouch
+
+LLO 8200
+
+Introduction to Data Science
+
+September 22, 2019
+
+#### Setting up R
+
+To begin, I cleared my Global Environment and retrieved the necessary libraries. I also set my working directory to my GitHub repository folder.
+
+```{r setup}
+## Clear environment
+rm(list=ls())
+
+## Get libraries
+library(arules)
+library(rtweet)
+library(twitteR)
+library(ROAuth)
+library(jsonlite)
+library(rjson)
+library(tokenizers)
+library(tidyverse)
+library(tm)
+library(wordcloud)
+
+## Set working director
+setwd("~/Documents/GitHub/data-science")
+```
+
+#### 1. Create a twittR Account. What is your consumerKey? What is your accessToken?
+
+My consumerKey and accessToken can be found below.
+
+```{r twitter_setup}
+## Establish API keys and access tokens
+consumerKey='68bxc6lCLWKkMPVVKYgCzl9DO'
+consumerSecret='QJumJXPJqNxTIbQm0CARNtOnOVTXGO1USqiE3OF3taMY0h99kA'
+access_Token='1056575519443931136-ihgtVbXKExFBLcSo4A8gzYIEFQ9gdX'
+access_Secret='xcD5nPWkFgz0586tsj4hiejHE9OoeQ1awwJLfRGCiNs4f'
+
+requestURL='https://api.twitter.com/oauth/request_token'
+accessURL='https://api.twitter.com/oauth/access_token'
+authURL='https://api.twitter.com/oauth/authorize'
+
+#filename="TwitterConKey_ConSec_AccTok_AccSec.txt"
+#(tokens<-read.csv(filename, header=TRUE, sep=","))
+#(consumerKey=as.character(tokens$consumerKey))
+#consumerSecret=as.character(tokens$consumerSecret)
+#access_Token=as.character(tokens$access_Token)
+#access_Secret=as.character(tokens$access_Secret)
+```
+
+#### 2. Run example 07-twitterAPI.rmd. Use hashtag: Trump. What are the 5 most common words contained within collected tweets.
+
+First, I set up the OAuth credentials and searched #Trump. Then I converted the results to a data frame.
+
+```{r twitter_oauth}
+## Set up the OAuth credentials for a twitteR session
+setup_twitter_oauth(consumerKey,consumerSecret,access_Token,access_Secret)
+
+## Scours twitter for hash tag
+jackass <- twitteR::searchTwitter("#Trump",n=50,since="2019-09-09")
+
+## Convert twitteR list to data.frames
+jackass_df <- twListToDF(jackass)
+```
+
+I then stored the tweets as a .csv file.
+
+```{r twitter_file}
+## Store the tweets in a .csv file
+tweets_file = "tweets.csv"
+(jackass_df$text[1])
+
+## Start the file
+tweets_csv <- file(tweets_file)
+
+## Tokenize tweets into a list of words 
+tokens <- tokenizers::tokenize_words(jackass_df$text[1],stopwords = stopwords::stopwords("en"), 
+          lowercase = TRUE,  strip_punct = TRUE, strip_numeric = TRUE,simplify = TRUE)
+
+## Write squished tokens
+cat(unlist(str_squish(tokens)), "\n", file=tweets_csv, sep=",")
+close(tweets_csv)
+
+## Append remaining lists of tokens into file
+tweets_csv <- file(tweets_file, open = "a")
+token_list = tokens
+for(i in 2:nrow(jackass_df)){
+  tokens<-tokenize_words(jackass_df$text[i],stopwords = stopwords::stopwords("en"), 
+            lowercase = TRUE,  strip_punct = TRUE, simplify = TRUE)
+  cat(unlist(str_squish(tokens)), "\n", file=tweets_csv, sep=",")
+  token_list <- c(token_list,  unlist(str_squish(tokens)))
+}
+close(tweets_csv)
+```
+
+I then transformd the list of words into a `TermDocumentMatrix`.
+
+```{r twitter_matrix}
+## Create frequency table
+cor <- Corpus(VectorSource(token_list))
+
+tdm <- TermDocumentMatrix(cor)
+m <- as.matrix(tdm)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+```
+
+By viewing `d` and ignoring some of the terms that don't make sense for this analysis---such as *trump*, *https*, *t.co*, and *don't*---the five most common words were: *Modi*, *Indian*, *Houston*, *Tarek Fatah*, and *Pakistan's*.
+
+#### Run this RMD file and choose your favorite hashtag, e.g. chocolate. Create a wordcloud using words from all collected tweets.
+
+I followed the same sequence of steps as in #2, only this time I scraped Twitter for #RagnarRelay, which is a 200-ish mile road race I ran last week with my wife and some of our friends in Colorado.
+
+```{r twitter2, include=FALSE}
+## Set up the OAuth credentials for a twitteR session
+setup_twitter_oauth(consumerKey,consumerSecret,access_Token,access_Secret)
+
+## Scours twitter for hash tag
+ragnar <- twitteR::searchTwitter("#RagnarRelay",n=9999,since="2019-09-10")
+
+## Convert twitteR list to data.frames
+ragnar_df <- twListToDF(ragnar)
+
+## Store the tweets in a .csv file
+ragnar_file = "ragnar.csv"
+(ragnar_df$text[1])
+
+## Start the file
+ragnar_csv <- file(ragnar_file)
+
+## Tokenize tweets into a list of words 
+ragnar_tokens <- tokenizers::tokenize_words(ragnar_df$text[1],stopwords = stopwords::stopwords("en"), 
+          lowercase = TRUE,  strip_punct = TRUE, strip_numeric = TRUE,simplify = TRUE)
+
+## Write squished tokens
+cat(unlist(str_squish(ragnar_tokens)), "\n", file=ragnar_csv, sep=",")
+close(ragnar_csv)
+
+## Append remaining lists of tokens into file
+ragnar_csv <- file(ragnar_file, open = "a")
+ragnar_token_list = ragnar_tokens
+for(i in 2:nrow(ragnar_df)){
+  ragnar_tokens<-tokenize_words(ragnar_df$text[i],stopwords = stopwords::stopwords("en"), 
+            lowercase = TRUE,  strip_punct = TRUE, simplify = TRUE)
+  cat(unlist(str_squish(ragnar_tokens)), "\n", file=ragnar_csv, sep=",")
+  ragnar_token_list <- c(ragnar_token_list,  unlist(str_squish(ragnar_tokens)))
+}
+close(ragnar_csv)
+
+## Create frequency table
+cor2 <- Corpus(VectorSource(ragnar_token_list))
+
+tdm2 <- TermDocumentMatrix(cor2)
+m2 <- as.matrix(tdm2)
+v2 <- sort(rowSums(m2),decreasing=TRUE)
+d2 <- data.frame(word = names(v2),freq=v2)
+```
+
+Finally, I removed the *https* and *t.co* observations and used the `wordcloud` function to visualize the popularity of words.
+
+```{r wordcloud}
+## Create a subset with unimportant values removed
+d2_cleaned <- d2[3:417,]
+
+## Create a wordcloud
+wordcloud(d2_cleaned$word,d2_cleaned$freq, colors=c("red","green","blue","orange","black","purple", "seagreen") , random.color = TRUE, min.freq = 3)
+```
+
