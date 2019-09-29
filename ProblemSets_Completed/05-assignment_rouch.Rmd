@@ -20,16 +20,9 @@ To begin, I cleared my Global Environment and retrieved the necessary libraries.
 rm(list=ls())
 
 ## Get libraries
-library(arules)
-library(rtweet)
-library(twitteR)
-library(ROAuth)
-library(jsonlite)
-library(rjson)
-library(tokenizers)
 library(tidyverse)
-library(tm)
-library(wordcloud)
+library(nycflights13)
+library(RSQLite)
 
 ## Set working director
 setwd("~/Documents/GitHub/data-science")

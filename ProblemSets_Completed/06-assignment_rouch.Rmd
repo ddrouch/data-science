@@ -1,0 +1,152 @@
+## Assignment 6
+
+Derek Rouch
+
+LLO 8200
+
+Introduction to Data Science
+
+September 26, 2019
+
+### Setting up R
+
+To begin, I set my working directory to my GitHub repository folder. I also cleared my Global Environment and retrieved the necessary libraries. 
+
+```{r setup}
+# knitr
+knitr::opts_chunk$set(echo = TRUE)
+
+# Set working director
+setwd("~/Documents/GitHub/data-science")
+
+# Clear environment
+rm(list=ls())
+
+# Get libraries
+library(tidyverse)
+library(nycflights13)
+library(RSQLite)
+```
+
+### 1. Using the nyclfights13 library, open all of the data tables and turn them into a databse. Make sure to include flights, airlines, airports, weather and planes.
+
+First, I opened the tables stored in `data()` from the `nycflights` library. 
+
+```{r data}
+# Data sources from NYC flights
+data(flights)
+data(airlines)
+data(airports)
+data(weather)
+data(planes)
+```
+
+Then, I opened a connection to a database using `RSQLite`.
+
+```{r data_connect}
+# Open connection
+con <- dbConnect(RSQLite::SQLite(), ":memory:")
+
+# Write data tables into a database
+dbWriteTable(con,
+             "flights", 
+             as.data.frame(flights))
+
+dbWriteTable(con,
+             "airlines", 
+             as.data.frame(airlines))
+
+dbWriteTable(con,
+             "airports", 
+             as.data.frame(airports))
+
+dbWriteTable(con,
+             "weather", 
+             as.data.frame(weather))
+
+dbWriteTable(con,
+             "planes", 
+             as.data.frame(planes))
+```
+
+### 2. Create a data frame from a SQL pull from the database that consists only of flights that took off from JFK in May.
+
+First, I named my SQL request and defined it for those flights departing from JFK in May. Then, I sent that query through the connection established in #1. Finally, I generated a data frame from the results and cleared my request.
+
+```{r jfk}
+# SQL request: Flights that took off from JFK in May
+req_text<-"SELECT *
+            FROM flights f 
+            WHERE f.origin='JFK'
+            AND f.month=5
+            "
+# Send query through connection
+req<-dbSendQuery(con,req_text)
+
+# Generate dataframe from results
+req_df<-dbFetch(req,n=-1)
+
+# Clear request
+dbClearResult(req)
+
+# View data frame header 
+head(req_df,20)
+```
+
+### 3. Create a data frame from a SQL pull from the database that consists only of flights that took off on-time (a delay of less than 10 minutes) from Newark at temperatures of less than 40 degrees F.
+
+First, I named my SQL request and defined it for those flights that took off from Newark on time when temperatures were 40 degrees F or less.
+
+Then, I sent that query through the connection, generated a data frame from the results, and cleared my request.
+
+```{r on_time}
+# SQL request: Flights that took off on-time from Newark at temperatures of less than 40 degrees F
+req2_text<-"SELECT f.year, f.month, f.day, f.dep_delay, f.origin, w.temp
+            FROM flights f
+            JOIN weather w
+              ON w.year=f.year
+              AND w.month=f.month
+              AND w.day=f.day
+            WHERE f.origin='EWR'
+              AND f.dep_delay<10
+              AND w.temp<40
+            "
+
+# Send query through connection
+req2<-dbSendQuery(con,req2_text)
+
+# Generate dataframe from results
+req2_df<-dbFetch(req2,n=-1)
+
+# Clear request
+dbClearResult(req2)
+
+# View data frame header 
+head(req2_df,20)
+```
+
+### 4. Create data frame from a SQL pull from the database that consists of planes flown by United.
+
+I used the **tailnum** identifier to join the `planes` and `flights` databases, where United Air Lines Inc. was the carrier.
+
+```{r united}
+# SQL request: Planes flown by United
+req3_text<-"SELECT p.tailnum, p.year, p.type, p.manufacturer, p.model, p.engines, p.seats, p.speed, p.engine, f.carrier
+            FROM planes p
+            JOIN flights f
+              ON f.tailnum=p.tailnum
+            WHERE f.carrier='UA'
+            "
+
+# Send query through connection
+req3<-dbSendQuery(con,req3_text)
+
+# Generate dataframe from results
+req3_df<-dbFetch(req3,n=-1)
+
+# Clear request
+dbClearResult(req3)
+
+# View data frame header 
+head(req3_df,20)
+```
