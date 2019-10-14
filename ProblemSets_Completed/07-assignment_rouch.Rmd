@@ -1,0 +1,108 @@
+---
+title: "Assignment 7"
+author: "Derek Rouch"
+date: "9/29/2019"
+output: html_document
+---
+
+### Setting up R
+
+To begin, I set my working directory to my GitHub repository folder. I also cleared my Global Environment and retrieved the necessary libraries. 
+
+```{r setup}
+## knitr
+knitr::opts_chunk$set(echo = TRUE)
+
+## Set working director
+setwd("~/Documents/GitHub/data-science")
+
+## Clear environment
+rm(list=ls())
+
+## Get libraries
+library(tidyverse)
+library(dplyr)
+library(stats)
+library(flexclust)
+library(ggplot2)
+library(LICORS)
+library(knitr)
+library(modelr)
+library(readxl)
+```
+
+### 1. Download the student evaluation dataset from the website.
+
+```{r stud_eval}
+## Load data
+stud_eval<-read_xlsx("/Users/derekrouch/Documents/GitHub/data-science/turkiyestudentevaluation_generic.xlsx")
+```
+
+### 2. Select a set of 10 related variables that you think might serve as the basis for clustering.
+
+The variables I selected were:
+
+**attendance:** Code of the level of attendance; values from {0, 1, 2, 3, 4}
+**difficulty:** Level of difficulty of the course as perceived by the student; values taken from {1,2,3,4,5}
+**Q2:** The course aims and objectives were clearly stated at the beginning of the period.
+**Q3:** The course was worth the amount of credit assigned to it.
+**Q5:** The class discussions, homework assignments, applications and studies were satisfactory.
+**Q8:** The quizzes, assignments, projects and exams contributed to helping the learning.
+**Q9:** I greatly enjoyed the class and was eager to actively participate during the lectures.
+**Q11:** The course was relevant and beneficial to my professional development.
+**Q13:** The Instructor's knowledge was relevant and up to date.
+**Q20:** The Instructor explained the course and was eager to be helpful to students.
+
+```{r}
+## Select 10 variables
+stud_eval <- stud_eval %>% select(attendance, difficulty, Q2, Q3, Q5, Q8, Q9, Q11, Q13, Q20)
+```
+
+### 3. Run the clustering algorithm `kmeanspp` to identify 3 clusters.
+
+I ran `kmeansapp`, specifying that it shnuld use 3 clusters.
+
+```{r cluster}
+## Run cluster analysis until it converges on a stable solution
+c <- kmeanspp(stud_eval, k = 3, start = "random", iter.max = 1000, nstart = 50)
+table(c$cluster)
+```
+
+### 4. Summarize the clusters using the variables you selected.
+
+I explored the clusters first by grouping them by **attendance**...
+
+```{r summary_attendance}
+## Add predictions
+stud_eval$cluster <- c$cluster
+
+## Examine relationship of cluster assignment to chars.
+mycols <- c("Group 1", "Group 2", "Group 3")
+
+## Attendance
+pt <- prop.table(table(stud_eval$cluster, stud_eval$attendance), margin = 1)
+
+## Format table
+rownames(pt) <- mycols
+pt <- pt * 100
+pt <- round(pt, 1)
+
+## Group by attendance
+kable(pt, row.names = TRUE, col.names = c("0", "1", "2", "3", "4"))
+```
+
+...and then by **difficulty**
+
+```{r summary_difficulty}
+## Difficulty
+pt2 <- prop.table(table(stud_eval$cluster, stud_eval$difficulty), margin = 1)
+
+## Format table
+rownames(pt2) <- mycols
+pt2 <- pt2 * 100
+pt2 <- round(pt2, 1)
+
+## Group by difficulty
+kable(pt2, row.names = TRUE, col.names = c("1", "2", "3", "4", "5"))
+```
+

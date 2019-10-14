@@ -1,0 +1,105 @@
+---
+title: "Project"
+author: "Sandra 'Liz' Barnes, Dan Parilla, and Derek Rouch"
+date: "10/13/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+## knitr
+knitr::opts_chunk$set(echo = TRUE)
+
+## Set working director
+setwd("~/Documents/GitHub/data-science")
+
+## Clear environment
+rm(list=ls())
+
+## Get libraries
+library(tidyverse)
+library(stats)
+library(flexclust)
+library(ggplot2)
+library(ggthemes)
+library(LICORS)
+library(knitr)
+library(modelr)
+library(readxl)
+library(plotly)
+library(Metrics)
+library(cluster)
+library(factoextra)
+library(dendextend)
+library(dplyr)
+library(jsonlite)
+library(rjson)
+library(tokenizers)
+library(tm)
+library(wordcloud)
+library(tidytext)
+library(stringr)
+```
+
+```{r load_data}
+## Load in the FiveThirtyEight Bob Ross dataset
+ross <- read_csv('/Users/derekrouch/Google Drive/00 Vanderbilt/LLO 8200 - Introduction to Data Science/Data Project/elements-by-episode.csv')
+```
+
+```{r tokenize_episode_titles}
+## Tokenize episode titles into a list of words 
+
+## Store the titles in a csv file ... 
+TransactionFile = "ross_titles.csv"
+
+## Start the file
+Trans <- file(TransactionFile)
+
+## Tokenize titles into a list of words 
+Tokens<-tokenizers::tokenize_words(ross$TITLE[1],stopwords = stopwords::stopwords("en"), 
+          lowercase = TRUE,  strip_punct = TRUE, strip_numeric = TRUE,simplify = TRUE)
+
+## Write squished tokens
+cat(unlist(str_squish(Tokens)), "\n", file=Trans, sep=",")
+close(Trans)
+
+## Append remaining lists of tokens into file
+Trans <- file(TransactionFile, open = "a")
+tokenList = Tokens
+for(i in 2:nrow(ross)){
+  Tokens<-tokenize_words(ross$TITLE[i],stopwords = stopwords::stopwords("en"), 
+            lowercase = TRUE,  strip_punct = TRUE, simplify = TRUE)
+  cat(unlist(str_squish(Tokens)), "\n", file=Trans, sep=",")
+  tokenList <- c(tokenList,  unlist(str_squish(Tokens)))
+}
+close(Trans)
+```
+
+
+```{r wordcloud}
+## Transform words in episode titles into a TermDocumentMatrix
+cor <- Corpus(VectorSource(tokenList))
+
+tdm <- TermDocumentMatrix(cor)
+m <- as.matrix(tdm)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+
+## Create a word cloud
+wordcloud(d$word,d$freq, colors=c("#D8AB4C","#006682","#993D1B","#333333","#464E21") , random.color = TRUE, min.freq = 3)
+```
+```{r plot}
+## Select only those words used in at least 10 episode titles
+top12 <- d[1:12,1:2]
+
+## Reorder according to frequency
+top12 <- transform(top12, word=reorder(word, -freq) )
+
+## Plot as a bar chart
+gg <- ggplot(data=top12, aes(x=word, y=freq)) +
+  geom_bar(fill = "#D8AB4C", stat="identity") +
+  theme_tufte()
+
+## Call the plot
+gg
+```
+

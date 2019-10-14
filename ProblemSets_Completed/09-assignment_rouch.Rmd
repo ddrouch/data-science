@@ -1,0 +1,11 @@
+---
+title: "Assignment 9"
+author: "Derek Rouch"
+date: "10/13/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+

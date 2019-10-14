@@ -1,0 +1,204 @@
+---
+title: "Assignment 8"
+author: "Derek Rouch"
+date: "10/13/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+## knitr
+knitr::opts_chunk$set(echo = TRUE)
+
+## Set working director
+setwd("~/Documents/GitHub/data-science")
+
+## Clear environment
+rm(list=ls())
+
+## Get libraries
+library(rtweet)
+library(twitteR)
+library(ROAuth)
+library(jsonlite)
+library(streamR)
+library(rjson)
+library(tokenizers)
+library(tidyverse)
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(tm)
+library(wordcloud)
+
+## Get sentiment analysis libraries
+library(syuzhet)
+library(stringr)
+library(arulesViz)
+```
+
+### 1. Run the ARM coded example provided and choose a hashtag of your liking and collect 100 tweets. What hashtag did you choose?
+
+First, I mapped my Twitter credentials to the OAuth protocol.
+
+```{r twitter_setup}
+## Establish API keys and access tokens
+consumerKey='68bxc6lCLWKkMPVVKYgCzl9DO'
+consumerSecret='QJumJXPJqNxTIbQm0CARNtOnOVTXGO1USqiE3OF3taMY0h99kA'
+access_Token='1056575519443931136-ihgtVbXKExFBLcSo4A8gzYIEFQ9gdX'
+access_Secret='xcD5nPWkFgz0586tsj4hiejHE9OoeQ1awwJLfRGCiNs4f'
+
+requestURL='https://api.twitter.com/oauth/request_token'
+accessURL='https://api.twitter.com/oauth/access_token'
+authURL='https://api.twitter.com/oauth/authorize'
+```
+
+Then, I scraped Twitter for the hashtag **#DigCitCulture**, a hashtag that Common Sense Media was trying to get started at a digital citizenship summit I recently attended.
+
+```{r twitter_search}
+## Map Twitter OAuth to keys
+setup_twitter_oauth(consumerKey,consumerSecret,access_Token,access_Secret)
+
+## Scrape Twitter for #DigCitCulture
+Search<-twitteR::searchTwitter("#DigCitCulture",n=100,since="2019-10-04")
+Search_DF <- twListToDF(Search)
+```
+
+### 2. Create a wordcloud of all words from all tweets collected, and identify words that are non- informative and should be removed for the purposes of analysis (stopwords). What stopwords did you choose.
+
+I tokenized the search results to find the individual words, and cleaned up the list by adding **t.co**, **rt**, **http**, and **https** as new stop words using the vector `new_stops`. 
+
+```{r stopwords}
+## Store the tweets in a CSV file 
+TransactionTweetsFile = "tweets.csv"
+head(Search_DF$text[1])
+
+## Start the transaction file
+Trans <- file(TransactionTweetsFile)
+
+## List standard English stop words
+stopwords("en")
+
+## Add t.co, rt, http, and https to the list as new_stops
+new_stops <- c(stopwords("en"), "t.co", "rt", "http", "https")
+
+## Tokenize tweets into a list of words 
+Tokens<-tokenizers::tokenize_words(Search_DF$text[1],stopwords = new_stops, 
+          lowercase = TRUE,  strip_punct = TRUE, strip_numeric = TRUE,simplify = TRUE)
+
+## Write squished tokens
+cat(unlist(str_squish(Tokens)), "\n", file=Trans, sep=",")
+close(Trans)
+
+## Append remaining lists of tokens into file
+Trans <- file(TransactionTweetsFile, open = "a")
+tokenList = Tokens
+for(i in 2:nrow(Search_DF)){
+  Tokens<-tokenize_words(Search_DF$text[i],stopwords = new_stops, 
+            lowercase = TRUE,  strip_punct = TRUE, simplify = TRUE)
+  cat(unlist(str_squish(Tokens)), "\n", file=Trans, sep=",")
+  tokenList <- c(tokenList,  unlist(str_squish(Tokens)))
+}
+
+## Close transaction file
+close(Trans)
+```
+
+Then, I created a word cloud, customizing the colors to match those defined in Vanderbilt's online style guide (just for fun).
+
+```{r wordcloud}
+## Transform list of words into a TermDocumentMatrix
+cor <- Corpus(VectorSource(tokenList))
+
+tdm <- TermDocumentMatrix(cor)
+m <- as.matrix(tdm)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+
+## Create the wordcloud
+wordcloud(d$word,d$freq, colors=c("#D8AB4C","#006682","#993D1B","#333333","#464E21"), random.color = TRUE, min.freq = 3)
+```
+
+### 3. Create transaction data from the tweets and identify 5 rules that are “most interesting”. What criteria did you use to determine whether a rule was “interesting”? Hint: Lift, Support, Confidence, ... ?
+
+I then applied rules and sorted them by *confidence* and *support*.
+
+```{r tweet_rules}
+## Read in the tweet transactions
+TweetTrans <- read.transactions(TransactionTweetsFile,
+                                rm.duplicates = FALSE,
+                                format = "basket",
+                                sep=","
+                                ## cols =
+                                )
+
+inspect(TweetTrans)
+
+## See the words that occur the most
+Sample_Trans <- sample(TweetTrans, 50)
+summary(Sample_Trans)
+
+## Read the transactions data into a dataframe
+TweetDF <- read.csv(TransactionTweetsFile, header = FALSE, sep = ",")
+head(TweetDF)
+
+## Save the dataframe using the write table command
+write.table(TweetDF, file = "DigCitCulture.csv", col.names = FALSE, row.names = FALSE, sep = ",")
+TweetTrans <- read.transactions("DigCitCulture.csv", sep = ",",
+                                format("basket"), rm.duplicates = TRUE)
+inspect(TweetTrans)
+
+## Apply rules
+TweetTrans_rules = arules::apriori(TweetTrans,
+                  parameter = list(support=.01, confidence=.01, minlen=2))
+inspect(TweetTrans_rules[1:10])
+
+## Sort by support
+SortedRules_sup <- sort(TweetTrans_rules, by="support", decreasing = TRUE)
+inspect(SortedRules_sup[1:15])
+
+## Sort by confidence
+SortedRules_conf <- sort(TweetTrans_rules, by="confidence", decreasing = TRUE)
+inspect(SortedRules_conf[1:15])
+
+## Sort by lift
+SortedRules_lift <- sort(TweetTrans_rules, by="lift", decreasing = TRUE)
+inspect(SortedRules_lift[1:15])
+```
+
+A few examples that stood out as most "interesting" to me were:
+
+1. The support between **amp** and **digcit**. This was interesting because it had the highest support relationship, and I'm not entirely sure what **amp** is referring to. It appeared often, too, with a count of 28.
+
+2. The confidence between **nearpod** and **lessons**. Nearpod is a tool for creating interactive lessons, so I imagine these occurred as a string, to explain the perfect relationship...
+
+3. ...However, the perfect confidence between **nearpod** and **flocabulary** is more interesting. Flocabulary is a library of educational hip-hop songs, so it is surprising to see that it also has a perfect confidence of 1.0.
+
+I then created a couple of subsets using `%in%` to include the Twitter handles of a couple colelagues of mine (Sue and Sonal) who presented at the Digital Citizenship Summit
+
+```{r buddies}
+## Subset using @suethotz
+sue <- subset(TweetTrans_rules, subset = lhs %in% "suethotz")
+SortedSue <- sort(sue, by="count", decreasing = TRUE)
+inspect(SortedSue[1:15])
+
+## Subset using @trpatel20
+sonal <- subset(TweetTrans_rules, subset = lhs %in% "trpatel20")
+SortedSonal <- sort(sonal, by="count", decreasing = TRUE)
+inspect(SortedSonal[1:15])
+```
+
+A couple interesting findings from this were:
+
+4. There is a 0.67 confidence that "fantastic" appears in a tweet alongside Sue's Twitter handle.
+
+5. There is a 0.50 confidence that "inspired" appears in a tweet alongside Sonal's Twitter handle.
+
+### 4. Create a visualization (using arulesviz or another) of the rules found as a result of your ARM model.
+
+Finally, I plotted `SortedRules_sup` and `SortedRules_conf`.
+
+```{r plot}
+plot(SortedRules_sup[1:50],method = "graph",engine = "interactive",shading = "confidence")
+plot(SortedRules_conf[1:50],method = "graph",engine = "interactive",shading = "confidence")
+```
+

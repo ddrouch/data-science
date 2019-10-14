@@ -165,6 +165,8 @@ Finally, I removed the *https* and *t.co* observations and used the `wordcloud` 
 ## Create a subset with unimportant values removed
 d2_cleaned <- d2[3:417,]
 
+save(d,)
+
 ## Create a wordcloud
 wordcloud(d2_cleaned$word,d2_cleaned$freq, colors=c("red","green","blue","orange","black","purple", "seagreen") , random.color = TRUE, min.freq = 3)
 ```
